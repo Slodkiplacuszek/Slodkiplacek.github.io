@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ptoszek Skrypt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            user-select: none;
+        }
+        .container {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        #ptak {
+            font-size: 80px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        #ptak:hover {
+            transform: scale(1.1);
+        }
+        .counter {
+            font-size: 1.2rem;
+            margin-top: 15px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Siemano! 🐦</h1>
+        <p>Kliknij w ptoszka 3 razy albo wciśnij spację 3 razy!</p>
+        <div id="ptak">🐦</div>
+        <div class="counter" id="counterText">Licznik: 0/3</div>
+    </div>
+
+    <script>
+        let clicks = 0;
+        const ptakElem = document.getElementById('ptak');
+        const counterText = document.getElementById('counterText');
+
+        // Frazy do zmiany tytułu strony
+        const titles = ["🐦 PTOSZEK", "Knuuurrr eksplozja!", "Hee haw hee haw!", "Gdzie jest ptok?", "Ptoszek.pl style"];
+
+        function triggerInteractions() {
+            clicks++;
+            counterText.innerText = `Licznik: ${clicks}/3`;
+
+            if (clicks >= 3) {
+                startChaos();
+            }
+        }
+
+        // Reakcja na kliknięcie w myszkę
+        ptakElem.addEventListener('click', triggerInteractions);
+
+        // Reakcja na klawisz spacji
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                triggerInteractions();
+            }
+        });
+
+        function startChaos() {
+            // 1. Zmiana tyłu i treści strony
+            document.title = "KNUUURR!";
+            document.body.innerHTML = "<h1 style='color:red; font-size: 3rem;'>🐦 PTOSZEK PRZEJĄŁ STRONĘ!</h1>";
+
+            // 2. Cykliczna zmiana tytułu karty
+            setInterval(() => {
+                const randomTitle = titles[Math.floor(Math.random() * titles.length)];
+                document.title = randomTitle;
+            }, 500);
+
+            // 3. Efekt dźwiękowy (Beep)
+            playAlertSound();
+
+            // 4. Otwieranie skaczących okienek (pop-up)
+            // Uwaga: większość przeglądarek zablokuje automatyczne tworzenie wielu okien bez pozwolenia
+            for (let i = 0; i < 3; i++) {
+                openPopUpWindow();
+            }
+        }
+
+        function openPopUpWindow() {
+            const width = 300;
+            const height = 200;
+            const left = Math.random() * (screen.width - width);
+            const top = Math.random() * (screen.height - height);
+
+            const win = window.open("", "_blank", `width=${width},height=${height},left=${left},top=${top}`);
+            if (win) {
+                win.document.write("<h2>🐦 Ptoszek Cię widzi!</h2>");
+            }
+        }
+
+        function playAlertSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(440, ctx.currentTime);
+                osc.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.5);
+            } catch (e) {
+                console.log("Audio API nieobsługiwane.");
+            }
+        }
+    </script>
+</body>
+</html>
